@@ -51,8 +51,8 @@ An end-to-end intelligent campus grievance redressal and analytical platform. Th
 ├── seed_data.py            # Test dataset seeder with realistic complaints
 ├── setup_project.py        # Environment setup and model training pipeline
 ├── grievance.db            # Local SQLite database
-└── requirements.txt        # Python dependency manifest.
-
+└── requirements.txt        # Python dependency manifest
+```
 
 ## Screenshots
 
