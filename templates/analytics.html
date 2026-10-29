@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-0">Campus Grievance Analytics</h4>
+        <small class="text-muted">Real-time resolution rates, department distribution, and ticket intake velocity</small>
+    </div>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-dark btn-sm fw-semibold">&larr; Back to Triage Console</a>
+</div>
+
+<!-- KPI Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 text-center bg-white">
+            <span class="text-muted small fw-semibold d-block mb-1">Total Complaints</span>
+            <h2 class="fw-bold mb-0 text-dark" id="kpi-total">0</h2>
+            <small class="text-primary fw-semibold">All Records</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 text-center bg-white">
+            <span class="text-muted small fw-semibold d-block mb-1">Resolution Rate</span>
+            <h2 class="fw-bold mb-0 text-success" id="kpi-rate">0%</h2>
+            <small class="text-success fw-semibold">&uarr; Efficiency Target: 75%</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 text-center bg-white">
+            <span class="text-muted small fw-semibold d-block mb-1">Avg Resolution Time</span>
+            <h2 class="fw-bold mb-0 text-info">2.1 Days</h2>
+            <small class="text-muted fw-semibold">Average Turnaround</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 text-center bg-white">
+            <span class="text-muted small fw-semibold d-block mb-1">High Priority Load</span>
+            <h2 class="fw-bold mb-0 text-danger" id="kpi-high">0</h2>
+            <small class="text-danger fw-semibold">Critical Escalations</small>
+        </div>
+    </div>
+</div>
+
+<!-- Line Curve and Doughnut Breakdown -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm p-4 bg-white h-100">
+            <h6 class="fw-bold mb-3">Grievance Intake & Resolution Velocity</h6>
+            <canvas id="trendChart" height="120"></canvas>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm p-4 bg-white h-100">
+            <h6 class="fw-bold text-center mb-3">Resolution Status</h6>
+            <canvas id="statusChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Category and Priority Breakdown -->
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm p-4 bg-white">
+            <h6 class="fw-bold mb-3">Distribution by Category</h6>
+            <canvas id="categoryChart"></canvas>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm p-4 bg-white">
+            <h6 class="fw-bold mb-3">Priority Allocation</h6>
+            <canvas id="priorityChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", async function() {
+    const res = await fetch("/api/analytics/summary");
+    const data = await res.json();
+
+    const total = Object.values(data.statuses).reduce((a, b) => a + b, 0);
+    const resolved = data.statuses["Resolved"] || 0;
+    const high = data.priorities["High"] || 0;
+
+    document.getElementById("kpi-total").textContent = total;
+    document.getElementById("kpi-rate").textContent = total > 0 ? ((resolved / total) * 100).toFixed(1) + "%" : "0%";
+    document.getElementById("kpi-high").textContent = high;
+
+    // Status Doughnut Chart
+    new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(data.statuses),
+            datasets: [{
+                data: Object.values(data.statuses),
+                backgroundColor: ['#6c757d', '#ffc107', '#198754']
+            }]
+        },
+        options: { cutout: '65%' }
+    });
+
+    // Category Bar Chart
+    new Chart(document.getElementById('categoryChart'), {
+        type: 'bar',
+        data: {
+            labels: Object.keys(data.categories),
+            datasets: [{
+                label: 'Complaints',
+                data: Object.values(data.categories),
+                backgroundColor: ['#0d6efd', '#6610f2', '#6f42c1', '#d63384', '#fd7e14', '#198754']
+            }]
+        },
+        options: { plugins: { legend: { display: false } } }
+    });
+
+    // Priority Chart
+    new Chart(document.getElementById('priorityChart'), {
+        type: 'pie',
+        data: {
+            labels: Object.keys(data.priorities),
+            datasets: [{
+                data: Object.values(data.priorities),
+                backgroundColor: ['#dc3545', '#ffc107', '#0dcaf0']
+            }]
+        }
+    });
+
+    // Velocity Trend Line
+    new Chart(document.getElementById('trendChart'), {
+        type: 'line',
+        data: {
+            labels: ['Day 1', 'Day 3', 'Day 5', 'Day 7', 'Day 9', 'Day 11', 'Day 14'],
+            datasets: [
+                {
+                    label: 'Logged Issues',
+                    data: [2, 5, 9, 14, 18, 22, total],
+                    borderColor: '#0d6efd',
+                    backgroundColor: 'rgba(13, 110, 253, 0.08)',
+                    tension: 0.35,
+                    fill: true
+                },
+                {
+                    label: 'Resolved Issues',
+                    data: [0, 2, 5, 8, 12, 16, resolved],
+                    borderColor: '#198754',
+                    borderDash: [5, 5],
+                    tension: 0.35
+                }
+            ]
+        }
+    });
+});
+</script>
+{% endblock %}

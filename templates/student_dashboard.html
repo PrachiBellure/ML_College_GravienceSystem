@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0">My Lodged Complaints</h4>
+    <a href="{{ url_for('submit_complaint') }}" class="btn btn-primary fw-semibold">+ New Complaint</a>
+</div>
+<div class="row g-3 mb-4 text-center">
+    <div class="col-3"><div class="card p-3 shadow-sm border-0"><h3>{{ metrics.total }}</h3><small class="text-muted">Total</small></div></div>
+    <div class="col-3"><div class="card p-3 shadow-sm border-0"><h3 class="text-secondary">{{ metrics.pending }}</h3><small class="text-muted">Submitted</small></div></div>
+    <div class="col-3"><div class="card p-3 shadow-sm border-0"><h3 class="text-warning">{{ metrics.in_progress }}</h3><small class="text-muted">In Progress</small></div></div>
+    <div class="col-3"><div class="card p-3 shadow-sm border-0"><h3 class="text-success">{{ metrics.resolved }}</h3><small class="text-muted">Resolved</small></div></div>
+</div>
+<div class="card border-0 shadow-sm">
+    <table class="table table-hover align-middle mb-0">
+        <thead class="table-light"><tr><th>Ref</th><th>Title</th><th>Category</th><th>Priority</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody>
+            {% for c in complaints %}
+            <tr>
+                <td><code>{{ c.complaint_id }}</code></td><td>{{ c.title }}</td>
+                <td><span class="badge bg-light text-dark border">{{ c.category }}</span></td>
+                <td><span class="badge bg-danger">{{ c.priority }}</span></td>
+                <td><span class="badge bg-info text-dark">{{ c.status }}</span></td>
+                <td><a href="{{ url_for('complaint_detail', cid=c.complaint_id) }}" class="btn btn-sm btn-outline-primary">Details</a></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="text-center text-muted py-4">No complaints lodged yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
