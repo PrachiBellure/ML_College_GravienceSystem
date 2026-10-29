@@ -63,3 +63,6 @@ An end-to-end intelligent campus grievance redressal and analytical platform. Th
 | Admin Triage Console | Executive Analytics Dashboard |
 | :---: | :---: |
 | ![Admin Triage](screenshots/admin_triage.png) | ![Analytics Dashboard](screenshots/analytics_dashboard.png) |
+| Admin Triage Console | Executive Analytics Dashboard |
+| :---: | :---: |
+| ![Admin Triage](screenshots/admin_triage.png) | ![Analytics Dashboard](screenshots/analytics_dashboard.png) |
