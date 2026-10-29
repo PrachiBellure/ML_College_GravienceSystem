@@ -51,4 +51,15 @@ An end-to-end intelligent campus grievance redressal and analytical platform. Th
 ├── seed_data.py            # Test dataset seeder with realistic complaints
 ├── setup_project.py        # Environment setup and model training pipeline
 ├── grievance.db            # Local SQLite database
-└── requirements.txt        # Python dependency manifest
+└── requirements.txt        # Python dependency manifest.
+
+
+## Screenshots
+
+| Student Grievance Submission | Duplicate Ticket Detection |
+| :---: | :---: |
+| ![Student Dashboard](screenshots/student_dashboard.png) | ![Duplicate Alert](screenshots/duplicate_alert.png) |
+
+| Admin Triage Console | Executive Analytics Dashboard |
+| :---: | :---: |
+| ![Admin Triage](screenshots/admin_triage.png) | ![Analytics Dashboard](screenshots/analytics_dashboard.png) |
